@@ -148,6 +148,16 @@ module Paperclip
         end
       end
 
+      def expiring_url(time = (Time.now + 3600), style = default_style)
+         expiring_url = directory.files.get_http_url(path(style), time)
+
+         if @options[:fog_host]
+           expiring_url.gsub!(/#{host_name_for_directory}/, dynamic_fog_host_for_style(style))
+         end
+
+         expiring_url
+      end
+
       def parse_credentials(creds)
         creds = find_credentials(creds).stringify_keys
         env = Object.const_defined?(:Rails) ? Rails.env : nil
